@@ -1,4 +1,7 @@
 # Moving-Object-Detection-MOD-
+
+**I have made a simple modification to work with OpenCV 4.x.**
+
 ## Usage
 
 Requirement:
@@ -8,10 +11,12 @@ Requirement:
 
 Build:
 
-	1.mkdir & cd build
+```
+mkdir build && cd build
 
-	2.cmake ..
-	
-	3.make
-  
+cmake ..
+
+make
+```
+
   Have fun with your webcam or any usbcam device!

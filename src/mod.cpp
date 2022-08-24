@@ -30,7 +30,7 @@ void MOD::pre_process()
     img_temp = Mat(dsize, CV_32SC3);
     img_scale = frame.clone();
     img_temp = frame.clone();
-    cvtColor(img_scale, gray, CV_BGR2GRAY);
+    cvtColor(img_scale, gray, cv::COLOR_BGR2GRAY);
     if(mode == UNDISTORT_IMG)
     {
         undist -> undistort_img(gray, gray);
@@ -129,7 +129,7 @@ void MOD::process()
         undist->undistort_map(frame);
     for (;;)
     {
-        double t = (double)cvGetTickCount();
+        double t = (double)cv::getTickCount();
         cap>>frame;
         if (frame.empty()) break;
         cal++;
@@ -146,8 +146,8 @@ void MOD::process()
             goodFeaturesToTrack(prevgray, prepoint, 1000, 0.01, 8, Mat(), 3, true, 0.04);
             if(mode ==UNDISTORT_PTS)
                 undist ->undistort_pts(prepoint);
-            cornerSubPix(prevgray, prepoint, Size(10, 10), Size(-1, -1), TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03));
-            calcOpticalFlowPyrLK(prevgray, gray, prepoint, nextpoint, state, err, Size(22, 22), 5, TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.01));
+            cornerSubPix(prevgray, prepoint, Size(10, 10), Size(-1, -1), TermCriteria(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS, 20, 0.03));
+            calcOpticalFlowPyrLK(prevgray, gray, prepoint, nextpoint, state, err, Size(22, 22), 5, TermCriteria(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS, 20, 0.01));
             optical_flow_check();
 
             //Find corners
@@ -225,7 +225,7 @@ void MOD::process()
                     {
                         double xx = C / A, yy = 0;
                         double xxx = C / A, yyy = gray.cols;
-                        line(pre_frame, Point(xx, yy), Point(xxx, yyy), Scalar::all(-1), 0.01);
+                        line(pre_frame, Point(xx, yy), Point(xxx, yyy), Scalar::all(-1), 1);
                         continue;
                     }
                     double xx = 0, yy = -C / B;
@@ -237,8 +237,8 @@ void MOD::process()
                         yyy = gray.rows;
                         xxx = -(C + B*yyy) / A;
                     }
-                    line(img_scale, Point(xx, yy), Point(xxx, yyy), Scalar::all(-1), 0.01);
-                    line(pre_frame, Point(xx, yy), Point(xxx, yyy), Scalar::all(-1), 0.01);
+                    line(img_scale, Point(xx, yy), Point(xxx, yyy), Scalar::all(-1), 1);
+                    line(pre_frame, Point(xx, yy), Point(xxx, yyy), Scalar::all(-1), 1);
                 }
             }
 
@@ -250,11 +250,11 @@ void MOD::process()
 
             //Show results
             string a = itos(cal / margin), b = ".jpg";
-            cvNamedWindow("img_scale", 0);
+            cv::namedWindow("img_scale", 0);
             imshow("img_scale", img_scale);
-            cvNamedWindow("pre", 0);
+            cv::namedWindow("pre", 0);
             imshow("pre", pre_frame);
-            cvNamedWindow("frame", 0);
+            cv::namedWindow("frame", 0);
             imshow("frame", frame);
         }
 
@@ -262,7 +262,7 @@ void MOD::process()
             break;
         std::swap(prevgray, gray);
         resize(img_temp, pre_frame, dsize);
-        t = (double)cvGetTickCount() - t;
-        cout << "cost time: " << t / ((double)cvGetTickFrequency()*1000.) << "ms" << endl;
+        t = (double)cv::getTickCount() - t;
+        cout << "cost time: " << t / ((double)cv::getTickFrequency()*1000.) << "ms" << endl;
     }
 }
